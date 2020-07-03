@@ -85,27 +85,26 @@ class Category extends CI_Controller {
 		$data['sum_jumlah']= $this->M_Cart_Beli->jumlah_cart();
 		//Load Library
 		$this->load->library('pagination');
-		$config['base_url']		= 'http://localhost/kopiku/category/daftar/'.$id.'/';
+		$config['base_url']		= base_url('category/daftar/'.$id);
+
 		//Tampil data searching
 		if($this->input->post('submit')){
-			$data['keyword'] = $this->input->post('keyword');
-			$this->session->set_userdata('keyword', $data['keyword']);
+			$data['caridata'] = $this->input->post('caridata');
+			$this->session->set_userdata('caridata', $data['caridata']);
 		}else{
-			$data['keyword'] = $this->session->userdata('keyword');
+			$data['caridata'] = $this->session->userdata('caridata');
 		}
 		
-		$this->db->like('prod_name', $data['keyword']);
-		$this->db->select('*');
-        $this->db->where('category.cat_id', $id);
-        $this->db->from('products');
-        $this->db->join('category', 'products.cat_id = category.cat_id');
-		$config['total_rows']	= $this->db->count_all_results();
+		$this->db->like('prod_name', $data['caridata']);
+		$this->load->model('produk/M_Produk');
+		$config['total_rows']	= $this->M_Produk->getKat($id);
+		$config['per_page'] 	= 6;
+		$config["uri_segment"] 	= 4;
 		$data['total_rows'] 	= $config['total_rows'];
-		$config['per_page'] 	= 3;
 		$this->pagination->initialize($config);
 
 		$data['start'] = $this->uri->segment(4);
-        $data['products'] = $this->M_Cat->getBarangKategori($id, $config['per_page'], $data['start'], $data['keyword']);
+        $data['products'] = $this->M_Cat->getBarangKategori($id, $config['per_page'], $data['start'], $data['caridata']);
 		$this->load->view('dashboard/template/admin_header', $data);
 		$this->load->view('dashboard/template/admin_sidebar');
 		$this->load->view('dataproduk/dataprodukv', $data);

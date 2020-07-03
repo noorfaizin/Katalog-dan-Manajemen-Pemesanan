@@ -1,3 +1,5 @@
+<div class="col-md-7 mx-auto"><?= $this->session->flashdata('message');?></div>
+
 <div class="row col-md-12 mx-auto p-5 bg-light">
     <div class="row col-md-12 mx-auto">
         <h1 class="mx-auto text-black font-weight-bold">PRODUK KAMI</h1><br>
@@ -14,19 +16,15 @@
                     <i class="fas fa-filter mt-1 mr-1"></i> FILTER
                 </a>
                 <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="cart">
-                    <table class="table table-hover m-0">
-                        <tbody>
-                            <tr>
-                                <td><a href="<?php echo base_url('produk/produkbaru')?>" class="text-dark">Produk Terbaru</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="<?php echo base_url('produk/hargarendah')?>" class="text-dark">Harga Terendah</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="<?php echo base_url('produk/hargatinggi')?>" class="text-dark">Harga Tertinggi</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="list-group col-md-12 p-0">
+                        <a href="<?= base_url('produk/produkbaru')?>" class="text-dark list-group-item">Produk Terbaru</a>
+                    </div>
+                    <div class="list-group col-md-12 p-0">
+                        <a href="<?= base_url('produk/hargarendah')?>" class="text-dark list-group-item">Harga Terendah</a>
+                    </div>
+                    <div class="list-group col-md-12 p-0">
+                        <a href="<?= base_url('produk/hargatinggi')?>" class="text-dark list-group-item">Harga Tertinggi</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,28 +57,65 @@
                 </div>
             </div>
             <div class="col-md-12">
+                <?php if(empty($products)) : ?>
+                <tr>
+                    <td colspan="8">
+                        <div class="alert alert-light" role="alert">
+                            <center><strong class="text-danger">Data produk tidak ditemukan!</strong></center>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif;?>
                 <!----------- PRODUK ----------->
                 <?php foreach($products as $p){ ?>
-                <div class="col-list-3">
-                    <div class="recent-car-list rounded">
-                        <div class="col-lg text-dark d-flex justify-content-center">
-                            <div class="card m-0 shadow">
-                                <div class="card-header bg-dark">
-                                    <h5 class="card-title m-0 text-white"><?php echo $p['prod_name']; ?></h5>
+                <div class="col-list-3 p-0" style="border-radius:15px">
+                    <div id="myProduct" class="recent-car-list ml-3">
+                        <div class="col-lg text-dark justify-content-center p-0">
+                        <a href="<?= base_url('beranda/detail/'.$p['prod_id'])?>" target="blank">
+                            <div class="card m-0 shadow" style="border-radius:15px">
+                                <div  class="card-header text-center m-0">
+                                    <img src="<?= base_url()?>gambar/<?php echo $p['prod_img']; ?>" class="card-img-top rounded" alt="image">
+                                    <div class="middle">
+                                        <?php
+                                        if(!$p['quantity'] == 0 ){?>
+                                            <div class="alert alert-success shadow font-weight-bold p-2"><?= 'Masih Ada';?></div>
+                                        <?php }else{ ?>
+                                            <div class="alert alert-danger shadow font-weight-bold p-2"><?= 'Habis';?></div>
+                                        <?php } ?>
+                                    </div>
                                 </div>
-                                    <img src="<?= base_url()?>gambar/<?php echo $p['prod_img']; ?>" class="card-img-top mt-4" style="width:50%;margin:auto;" alt="image">
-                                <div class="card-body mx-auto" style="margin-bottom:-30px;">
-                                    <td><h4 class="font-weight-light">Rp. <?php echo number_format($p['prod_price']) ?></h4></td>
+                                    
+                                <div class="card-body p-0" style="margin-bottom:-10px;">
+                                    <div class="col-md-12 bg-dark p-2">
+                                        <h5 class="text-white font-weight-bold m-0"><?php echo $p['prod_name']; ?></h5>
+                                    </div>
+                                    <div class="col-md-12  p-2">
+                                        <table class="ml-2">
+                                            <tbody>
+                                                <tr>
+                                                    <td><small class="text-dark">Harga</small></td>
+                                                    <td width="10px" align="center">:</td>
+                                                    <td><small class="text-success font-weight-bold font-italic">Rp. <?php echo number_format($p['prod_price']) ?>,-</small></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><small class="text-dark">Kategori</small></td>
+                                                    <td width="10px" align="center">:</td>
+                                                    <td><small class="badge badge-warning"><?php echo $p['cat_name']; ?></small></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div><hr>
-                                <div class="row col-md-12 mb-3 mx-auto">
-                                    <div class="col-md-4 mx-auto">
-                                        <?php echo anchor('beranda/detail/'.$p['prod_id'],'<div class="btn btn-outline-dark btn-md">Detail</div>')?>
-                                    </div>
-                                    <div class="col-md-8 mx-auto">
-                                        <?php echo anchor('cart/add_cart/'.$p['prod_id'],'<div class="btn btn-warning">Beli Sekarang</div>')?>
-                                    </div>
+                                <div class="col-md-12 mb-3">
+                                    <?php
+                                    if(!$p['quantity'] == 0 ){?>
+                                        <?php echo anchor('cart/add_cart/'.$p['prod_id'],'<div class="btn btn-sm btn-outline-warning text-dark float-right mr-1"><i class="fas fa-cart-plus"></i> Beli Sekarang</div>')?>
+                                    <?php }else{ ?>
+                                        <div class="font-weight-bold text-danger text-center p-1 m-0">Stok Habis</div>
+                                    <?php } ?>
                                 </div>
                             </div>
+                        </a>
                         </div>
                     </div>
                 </div>

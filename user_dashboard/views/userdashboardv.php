@@ -1,5 +1,4 @@
 <!------- MY ACCOUNT ------->
-
     <div class="row col-md-9 ml-3 mt-3">
       <div class="col-md-12">
         <h4 class="alert alert-light font-weight-bold"><i class="fas fa-usd mr-2"></i>Transaksi</h4>
@@ -9,7 +8,7 @@
               <div class="col-md-12">
                 <strong class="text-danger">Keranjang belanja kosong!</strong> silahkan memilih produk terlebih dahulu.
               </div>
-              <img class="mt-3" alt="foto" src="<?php echo base_url('gambar/box-null.png')?>" style="width:150px;"><br>
+              <img class="mt-3" alt="foto" src="<?php echo base_url('assets/dist/img/box-null.png')?>" style="width:150px;"><br>
               <a class="mt-5" href="<?php echo base_url('produk')?>"><div class="btn btn-warning btn-md">
                 <i class="fas fa-cart-plus"></i> Belanja Sekarang
               </div></a>

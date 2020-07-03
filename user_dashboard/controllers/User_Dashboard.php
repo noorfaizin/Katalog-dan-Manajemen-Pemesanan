@@ -70,7 +70,7 @@ class User_Dashboard extends CI_Controller{
 			$this->db->where('username',$username);
 			$this->db->update('users');
 			//flashdata
-			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button>Data akun berhasil diubah</div>');
+			$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow text-left text-success font-weight-bold" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/edit-ok.gif').'" width="70px"></div><div class="col-md">Data akun telah diperbarui!</div></div></div>');
 			redirect('user_dashboard/akun');
 		}
 	}

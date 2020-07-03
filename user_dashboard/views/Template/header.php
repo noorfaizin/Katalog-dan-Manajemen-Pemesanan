@@ -1,5 +1,6 @@
 <?php if($this->session->userdata('verif_akun') == 1){ ?>
 <!------- MENU MY ACCOUNT ------->
+<div class="row mx-auto bg-white" style="width:100%;">
 <div class="card-body">
 <div class="row col-md-12">
   <div class="col-md-7">

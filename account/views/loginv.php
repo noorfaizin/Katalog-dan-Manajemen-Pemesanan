@@ -1,5 +1,5 @@
 <!------- WELCOME ------->
-<div class="row mx-auto pl-5 pb-5 pt-5" style="width:100%;">
+<div class="row mx-auto pl-5 pb-5 pt-5 bg-white" style="width:100%;">
 	<div class="row col-md-12 mx-auto">
     <h1 class="text-dark font-weight-bold">WELCOME TO K⍜PIKU</h1>
   </div>

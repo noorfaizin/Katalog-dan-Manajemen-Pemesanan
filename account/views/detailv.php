@@ -1,144 +1,99 @@
-<!-- Content Header (Page header) -->
-<?php foreach($products as $u){ ?>
-<section class="content-header bg-light">
-  <div class="container-fluid mt-2">
-    <div class="col-sm-6">
-      <h4 class="font-weight-light"> <a href="<?= base_url('beranda'); ?>" class="text-warning"><i class="fas fa-home"></i> </a> / Detail <b class="text-dark font-weight-bold"><?php echo $u->prod_name ?></b></h4>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<!-- Header -->
+<div class="row col-md-12 mt-5 pl-4">
+  <div class="col-md-12 mx-auto">
+    <h4 class="font-weight-light ml-5">
+      <a class="text-dark" href="<?= base_url('beranda')?>">Home</a> / 
+      <a class="text-dark" href="<?= base_url('produk')?>">Produk</a> / 
+      <?php foreach($dprod as $dp){ ?>
+        <span><a class="text-dark" href="<?= base_url('produk/daftar/'), $dp['cat_id']; ?>"><?= $dp['cat_name'];?></a></span> / 
+        <span><?= $dp['prod_name'];?></span>
+      <?php } ?>
+    </h4>
+    <hr>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-
-  <!-- Default box -->
-  <div class="card card-solid">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-12 col-sm-6">
-          <div class="col-7 mx-auto">
-            <img src="<?= base_url()?>gambar/<?php echo $u->prod_img?>" class="product-image" alt="Product Image">
+<!-- Content -->
+<div class="row col-md-12 p-3" style="margin-bottom:100px">
+  <div class="row col-md-10 mx-auto">
+  <?php foreach($dprod as $dp){ ?>
+    <!-- Foto Produk -->
+    <div class="col-md-6">
+      <!----------- HEADER ----------->
+      <div id="carouselExampleIndicators" class="carousel slide bg-warning border p-2 bg-white" data-ride="carousel" style="width:350px;">
+        <ol class="carousel-indicators-image">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="width:70px;">
+            <img class="d-block" src="<?= base_url('gambar/'). $dp['prod_img'];?>" alt="First slide">
+          </li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1" style="width:70px;">
+            <img class="d-block" src="<?= base_url('gambar/'). $dp['prod_img2'];?>" alt="First slide">
+          </li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2" style="width:70px;">
+            <img class="d-block" src="<?= base_url('gambar/'). $dp['prod_img3'];?>" alt="First slide">
+          </li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img class="d-block" style="width:350px;" src="<?= base_url('gambar/'). $dp['prod_img'];?>" alt="First slide">
           </div>
-        </div>
-        <div class="col-12 col-sm-6">
-          <h3 class="font-weight-bold"><?php echo $u->prod_name ?></h3>
-          <p><?php echo $u->prod_desc ?></p>
-
-          <hr>
-          <h4>Stok Masih Tersedia</h4>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-default text-center active">
-              <input type="radio" name="color_option" id="color_option1" autocomplete="off" checked="">
-              <?php echo $u->quantity ?>
-              <br>
-            </label>
+          <div class="carousel-item">
+            <img class="d-block" style="width:350px;" src="<?= base_url('gambar/'). $dp['prod_img2'];?>" alt="Second slide">
           </div>
-          <hr>
-
-          <h2 class="mb-0">
-            <div class="badge badge-dark">RP. <?php echo number_format($u->prod_price) ?></div>
-          </h2>
-
-          <div class="mt-4">
-            <?php echo anchor('cart/add_cart/'.$u->prod_id,'<div class="btn btn-dark btn-lg btn-flat"><i class="fas fa-cart-plus fa-lg mr-2"></i> Add to Cart</div>')?>
-
-            <div class="btn btn-warning btn-lg btn-flat">
-              <i class="fas fa-heart fa-lg mr-2"></i> 
-              Add to Wishlist
-            </div>
+          <div class="carousel-item">
+            <img class="d-block" style="width:350px;" src="<?= base_url('gambar/'). $dp['prod_img3'];?>" alt="Third slide">
           </div>
-
-          <div class="mt-4 product-share">
-            <a href="#" class="text-dark"><i class="fa fa-facebook-square fa-2x"></i></a>
-            <a href="#" class="text-dark"><i class="fa fa-instagram fa-2x"></i></a>
-            <a href="#" class="text-dark"><i class="fa fa-google fa-2x"></i></a>
-            
-          </div>
-
         </div>
       </div>
     </div>
-    <!-- /.card-body -->
+
+    <!-- Spesifikasi -->
+    <div class="col-md-6">
+      <h5 class="badge badge-warning"><?= $dp['cat_name']; ?></h5>
+      <h4 class="font-weight-bold"><?= $dp['prod_name']; ?></h4>
+      <span class="font-weight-bold font-italic text-gray">"</span>
+      <small class="font-italic text-gray">
+        <?php
+          if(!$dp['prod_desc']){
+            echo 'Tidak ada deskripsi';
+          }else{
+            echo $dp['prod_desc'];
+          }
+        ?>
+      </small>
+      <span class="font-weight-bold font-italic text-gray">"</span>
+      <hr>
+      <table>
+        <tr valign="top">
+          <td width="50px"><h6 class="text-gray font-italic">Harga</h6></td>
+          <td><h4 class="text-danger font-weight-bold ml-3">Rp. <?= number_format($dp['prod_price']) ?>,-</h4></td>
+        </tr>
+      </table>
+      <hr>
+      <table>
+        <tr valign="top">
+          <td width="50px"><h6 class="text-gray font-italic">Stok</h6></td>
+          <td><h4 class="text-success font-weight-bold ml-3">
+            <?php
+              if(!$dp['quantity'] == 0 ){
+                echo $dp['quantity'];
+              }else{?>
+              <div class="badge badge-danger"><?= 'Stok Habis';?></div>
+            <?php } ?>
+          </h4></td>
+        </tr>
+      </table>
+
+      <div class="mt-4">
+      <?php
+      if(!$dp['quantity'] == 0 ){?>
+          <?= anchor('cart/add_cart/'.$dp['prod_id'],'<div class="btn btn-md btn-warning text-dark mr-1"><i class="fas fa-cart-plus"></i> Beli Sekarang</div>')?>
+      <?php }else{ ?>
+          <div class="font-weight-light font-italic text-gray text-center p-1 m-0">Ditunggu stok readynya ya bro..</div>
+      <?php } ?>
+        
+      </div>
+    </div>
+  <?php } ?>
   </div>
-  <!-- /.card -->
-
-</section>
-<?php } ?>
-<!-- /.content -->
-    
-<script>
-var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-      panel.style.display = "none";
-    } else {
-      panel.style.display = "block";
-    }
-  });
-}
-</script>
-<script>
-var TxtType = function(el, toRotate, period) {
-        this.toRotate = toRotate;
-        this.el = el;
-        this.loopNum = 0;
-        this.period = parseInt(period, 10) || 2000;
-        this.txt = '';
-        this.tick();
-        this.isDeleting = false;
-    };
-
-    TxtType.prototype.tick = function() {
-        var i = this.loopNum % this.toRotate.length;
-        var fullTxt = this.toRotate[i];
-
-        if (this.isDeleting) {
-        this.txt = fullTxt.substring(0, this.txt.length - 1);
-        } else {
-        this.txt = fullTxt.substring(0, this.txt.length + 1);
-        }
-
-        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
-
-        var that = this;
-        var delta = 200 - Math.random() * 100;
-
-        if (this.isDeleting) { delta /= 2; }
-
-        if (!this.isDeleting && this.txt === fullTxt) {
-        delta = this.period;
-        this.isDeleting = true;
-        } else if (this.isDeleting && this.txt === '') {
-        this.isDeleting = false;
-        this.loopNum++;
-        delta = 500;
-        }
-
-        setTimeout(function() {
-        that.tick();
-        }, delta);
-    };
-
-    window.onload = function() {
-        var elements = document.getElementsByClassName('typewrite');
-        for (var i=0; i<elements.length; i++) {
-            var toRotate = elements[i].getAttribute('data-type');
-            var period = elements[i].getAttribute('data-period');
-            if (toRotate) {
-              new TxtType(elements[i], JSON.parse(toRotate), period);
-            }
-        }
-        // INJECT CSS
-        var css = document.createElement("style");
-        css.type = "text/css";
-        css.innerHTML = ".typewrite > .wrap { border-right: 0.2em solid #343a40}";
-        document.body.appendChild(css);
-    };
-</script>
-</body>
-</html>
+  
+</div>

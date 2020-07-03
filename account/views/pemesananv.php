@@ -85,7 +85,7 @@
                         </h6>
                     </div>
                     <div class="card-footer p-0">
-                        <a href="<?= base_url('cart/detail_cart');?>" class="btn btn-warning btn-md btn-block" style="cursor:pointer;">Keranjang Belanja</a>
+                        <a href="<?= base_url('cart');?>" class="btn btn-warning btn-md btn-block" style="cursor:pointer;">Keranjang Belanja</a>
                     </div>
                 </div>
             </div>

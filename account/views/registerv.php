@@ -1,3 +1,4 @@
+<div class="row mx-auto pt-5 bg-white" style="width:100%;">
 <div class="col-md-6 mx-auto m-3 mb-5">
   <div class="card">
     <div class="card-body register-card-body bg-light">
@@ -107,3 +108,4 @@
   </div><!-- /.card -->
 </div>
 <!-- /.register-box -->
+</div>

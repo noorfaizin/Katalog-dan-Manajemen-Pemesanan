@@ -6,8 +6,4 @@ Matkul	: e-Commerce
 Dosen	: Abu Salam, M.Kom
 
 Priview website :
-- https://bit.ly/3cPbn83
-
-Login user
-- username : faiz
-- password : faiz123
+- https://kopiku-official.000webhostapp.com/cart

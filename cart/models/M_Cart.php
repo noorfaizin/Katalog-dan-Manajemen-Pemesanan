@@ -7,6 +7,11 @@ class M_Cart extends CI_Model {
 		$sql = "SELECT prod_id, prod_name, qty, price, (price * qty) as total_harga FROM cart order by prod_id";
 		return $this->db->query($sql);
 	}
+	public function jumlah_cart(){
+		$this->db->select_sum('qty','jumlah');
+		$this->db->from('cart');
+		return $this->db->get('')->row();
+	}
 	function fetch_data($query){
 		$this->db->select("prod_id, prod_name, qty, price, (price * qty) as total_harga");
 		$this->db->from("cart");
@@ -16,11 +21,6 @@ class M_Cart extends CI_Model {
 			$this->db->or_like('price', $query);
 		}
 		return $this->db->get();
-	}
-	public function jumlah_cart(){
-		$this->db->select_sum('qty','jumlah');
-		$this->db->from('cart');
-		return $this->db->get('')->row();
 	}
 	public function hapus_cart($where, $table){
 		$this->db->where($where);
@@ -99,8 +99,12 @@ class M_Cart extends CI_Model {
             $this->db->insert('orderitems', $data_d);
         }
         $this->db->where('id_user', $id_user);
-        $this->db->delete('cart');
-		$this->load->view('account/order_successv');
+		$this->db->delete('cart');
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
+		
+		$this->session->set_flashdata('message', '<div id="message-center" class="modal fade"><div class="modal-dialog" style=";margin-top:150px;"><div class="modal-content"><div class="row"><img class="mx-auto bg-white" src="'.base_url('assets/dist/gif/done.gif').'" width="150px" style=";margin-top:-70px;border-radius:100px"></div><div class="modal-body"><p class="font-weight-bold text-success">Pesanan Berhasil!</p><p>Terima kasih <span class="font-weight-bold text-success">'.$this->session->userdata('username').'</span> sudah berbelanja di K⍜PIKU. <br>Untuk proses pemesanan akan kami lanjutkan di Email/Whatsapp.</p><br><button class="btn btn-success btn-block" type="button" data-dismiss="modal">OK</button></div></div></div></div>');
+		redirect('user_dashboard');
     }
 	
 }

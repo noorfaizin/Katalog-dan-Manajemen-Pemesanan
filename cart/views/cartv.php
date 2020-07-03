@@ -1,4 +1,6 @@
-<div class="row mx-auto pb-5 pt-5" style="width:100%;">
+<div class="col-md-7 mx-auto"><?= $this->session->flashdata('message');?></div>
+
+<div class="row mx-auto pb-5 pt-5 bg-white" style="width:100%;">
 	<div class="row col-md-12 mx-auto">
     <h1 class="mx-auto text-black font-weight-bold">KERANJANG BELANJA</h1>
   </div>
@@ -10,12 +12,11 @@
     if (!$cart->result() ) { ?>
       <div class="col-md-12">
       <center>
-        <div class="alert alert-light alert-dismissible mt-5">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong class="text-danger">Keranjang belanja kosong!</strong> silahkan memilih produk terlebih dahulu.
+        <div class="row col-md-12 mt-5">
+          <img class="mx-auto" alt="foto" src="<?php echo base_url('assets/dist/img/box-null.png')?>" style="width:250px;">
         </div>
-        <div class="row col-md-12">
-          <img class="mx-auto" alt="foto" src="<?php echo base_url('gambar/box-null.png')?>" style="width:250px;">
+        <div class="mb-5">
+          <strong class="text-danger">Keranjang belanja kosong!</strong> silahkan memilih produk terlebih dahulu.
         </div>
         <a class="mt-5" href="<?php echo base_url('produk')?>"><div class="btn btn-warning btn-lg">
           <i class="fas fa-cart-plus"></i> Belanja Sekarang

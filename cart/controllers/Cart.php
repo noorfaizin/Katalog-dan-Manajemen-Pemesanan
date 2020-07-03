@@ -9,7 +9,9 @@ class Cart extends CI_Controller {
 		$this->load->helper('url');
 	}
 	public function index(){
-		$data['judul'] = "K⍜PIKU | Cart Shopping";
+		$data['judul'] = "K⍜PIKU | Keranjang Belanja";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']= $this->M_Cart->jumlah_cart();
@@ -78,15 +80,29 @@ class Cart extends CI_Controller {
 	public function delete_cart($id){
 		$where = array ('prod_id' => $id);
 		$this->M_Cart->hapus_cart($where, 'cart');
+		$rows = $this->db->query('select * from cart where prod_id ="'.$id.'" and id_user = "'.$id_user.'"');
+		$prod = $this->M_Cart->find($id);
+		$data = array(
+			'prod_name'	=> $prod->prod_name
+		);
+
+		$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/trash-bin.gif').'" width="70px"></div><div class="col-md">Anda telah menghapus <span class="font-weight-bold text-danger">'.$prod->prod_name.'</span><br>dari keranjang belanja anda</div></div></div>');
 		redirect('cart');
 	}
 	public function delete_cart_transaction($id){
 		$where = array ('prod_id' => $id);
 		$this->M_Cart->hapus_cart_transaction($where, 'cart');
+		$rows = $this->db->query('select * from cart where prod_id ="'.$id.'" and id_user = "'.$id_user.'"');
+		$prod = $this->M_Cart->find($id);
+		$data = array(
+			'prod_name'	=> $prod->prod_name
+		);
+		$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/trash-bin.gif').'" width="70px"></div><div class="col-md">Anda telah menghapus <span class="font-weight-bold text-danger">'.$prod->prod_name.'</span><br>dari keranjang belanja anda</div></div></div>');
 		redirect('user_dashboard');
 	}
 	public function delete_all_cart(){
 		$this->M_Cart->hapus_all_cart();
+		$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow text-left text-danger font-weight-bold" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/trash.gif').'" width="70px"></div><div class="col-md">Keranjang belanja kosong!</div></div></div>');
 		redirect('cart');
 	}
 	public function add_cart($id){
@@ -104,14 +120,21 @@ class Cart extends CI_Controller {
 			$this->db->update('cart', $data);
 		} else {
 			$prod = $this->M_Cart->find($id);
-			$data = array(
-				'prod_id'	=> $prod->prod_id,
-				'qty'		=> 1,
-				'price'		=> $prod->prod_price,
-				'prod_name'	=> $prod->prod_name,
-				'id_user'	=> $id_user
-			);
-			$this->M_Cart->input_data($data,'cart');
+			if(!$prod->quantity == 0){
+				$data = array(
+					'prod_id'	=> $prod->prod_id,
+					'qty'		=> 1,
+					'price'		=> $prod->prod_price,
+					'prod_name'	=> $prod->prod_name,
+					'id_user'	=> $id_user
+				);
+				$this->M_Cart->input_data($data,'cart');
+				$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/check-circle.gif').'" width="70px"></div><div class="col-md">Anda telah menambahkan <span class="font-weight-bold text-success">'.$prod->prod_name.'</span><br>ke keranjang belanja anda</div></div></div>');
+				redirect('cart');
+			}else{
+				$this->session->set_flashdata('message', '<div id="message" class="alert alert-dismissible shadow" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><div class="row"><div class="col-md-2"><img src="'.base_url('assets/dist/gif/warning-blink.gif').'" width="70px"></div><div class="col-md">Maaf untu produk <span class="font-weight-bold text-danger">'.$prod->prod_name.'</span> sedang kosong<br>silahkan memilih produk yang masih ada ya.. :)</div></div></div>');
+				redirect('produk');
+			}
 		}
 		redirect('cart');
 	}
@@ -150,6 +173,45 @@ class Cart extends CI_Controller {
 	}
 	
 	public function order_now(){
+
+		// Konfigurasi email
+        $config = [
+            'mailtype'    => 'html',
+            'charset'     => 'utf-8',
+            'protocol'    => 'smtp',
+            'smtp_host'   => 'smtp.gmail.com',
+            'smtp_user'   => 'kopiqucoffee@gmail.com',  // Email gmail
+            'smtp_pass'   => 'kopiqukuduscoffee2020',  // Password gmail
+            'smtp_crypto' => 'ssl',
+            'smtp_port'   => 465,
+            'crlf'    => "\r\n",
+            'newline' => "\r\n"
+        ];
+
+        // Load library email dan konfigurasinya
+        $this->load->library('email', $config);
+
+        // Email dan nama pengirim
+        $this->email->from('kopiqucoffee@gmail.com', 'K⍜PIKU OFFICIAL');
+
+        // Email penerima
+        $this->email->to('faiz.jetak@gmail.com'); // Ganti dengan email tujuan
+
+        // Lampiran email, isi dengan url/path file
+        $this->email->attach('https://masrud.com/content/images/20181215150137-codeigniter-smtp-gmail.png');
+
+        // Subject email
+        $this->email->subject('Proses Transaksi Pembelian Sukses | K⍜PIKU OFFICIAL');
+
+        // Isi email
+        $this->email->message("Ini adalah contoh email yang dikirim menggunakan SMTP Gmail pada CodeIgniter.<br><br> Klik <strong><a href='https://masrud.com/post/kirim-email-dengan-smtp-gmail' target='_blank' rel='noopener'>disini</a></strong> untuk melihat tutorialnya.");
+
+        // Tampilkan pesan sukses atau error
+        if ($this->email->send()) {
+            echo 'Sukses! email berhasil dikirim.';
+        } else {
+            echo 'Error! email tidak dapat dikirim.';
+        }
 		$this->M_Cart->co();
 	}
 }

@@ -3,53 +3,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_Beranda extends CI_Model{
 
-	function search_blog($title, $limit, $start){
+	function fetch_data($query){
+		$this->db->like('prod_name', $query);
+		$query = $this->db->get('products');
+			if($query->num_rows() > 0){
+				foreach($query->result_array() as $row)
+			{
+				$output[] = array(
+				'name'	 => $row["prod_name"],
+				'price'  => $row["prod_price"],
+				'image'  => $row["prod_img"]
+				);
+			}
+		echo json_encode($output);
+		}
+	}
+	
+	function search_data($title, $start){
 		$sql = "products";
 		if($title){
 			$this->db->like('prod_name', $title);
-			$this->db->or_like('vend_id', $title);
-			$this->db->or_like('quantity', $title);
-			$this->db->or_like('prod_price', $title);
-			$this->db->or_like('harga_beli', $title);
-			$this->db->or_like('cat_name', $title);
 		}
 		$this->db->order_by('prod_id', 'ASC');
     	$this->db->join('category', 'products.cat_id = category.cat_id');
-		$query = $this->db->get($sql, $limit, $start);
+		$query = $this->db->get($sql, $start);
     	return $query->result_array();
     }
 	function tampil_data_limit($limit, $start){
 		$sql = "products";
-		$this->db->order_by("prod_id");
+		$this->db->order_by('prod_id');
     	$this->db->join('category', 'products.cat_id = category.cat_id');
 		$query = $this->db->get($sql, $limit, $start);
     	return $query->result_array();
 	}
-	function produk_baru($limit, $start){
+	function data_menu_kopi(){
 		$sql = "products";
-		$this->db->order_by('products.prod_id','DESC');
-    	$this->db->join('category', 'products.cat_id = category.cat_id');
-		$query = $this->db->get($sql, $limit, $start);
+		$this->db->order_by('prod_id');
+		$this->db->join('category', 'products.cat_id = category.cat_id');
+		$this->db->where('cat_name', 'Menu Kopi');
+		$query = $this->db->get($sql);
     	return $query->result_array();
 	}
-	function produk_harga_rendah($limit, $start){
+	function data_tidak_kopi(){
 		$sql = "products";
-		$this->db->order_by("prod_price");
-    	$this->db->join('category', 'products.cat_id = category.cat_id');
-		$query = $this->db->get($sql, $limit, $start);
+		$this->db->order_by('prod_id');
+		$this->db->join('category', 'products.cat_id = category.cat_id');
+		$this->db->where('cat_name', 'Menu Tidak Kopi');
+		$query = $this->db->get($sql);
     	return $query->result_array();
 	}
-	function produk_harga_tinggi($limit, $start){
-		$sql = "products";
-		$this->db->order_by('products.prod_price','DESC');
-    	$this->db->join('category', 'products.cat_id = category.cat_id');
-		$query = $this->db->get($sql, $limit, $start);
-    	return $query->result_array();
-	}
+
 	function kategori(){
 		return $this->db->get('category')->result_array();
 	}
-	function detail_data($where,$table){		
-		return $this->db->get_where($table,$where);
+
+	public function detail_data($id){ 
+		$this->db->where('prod_id', $id);
+		$this->db->select('*');
+		$this->db->join('category', 'products.cat_id = category.cat_id');
+		$query = $this->db->get('products');
+		return $query->result_array();
 	}
 }

@@ -10,13 +10,14 @@ class Beranda extends CI_Controller {
 	}
 	public function index(){
 		$data['judul'] = "K⍜PIKU OFFICIAL";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']		= $this->M_Cart->jumlah_cart();
-		$data['products'] 		= $this->M_Beranda->tampil_data_limit(3,0);
-		$data['baru'] 			= $this->M_Beranda->produk_baru(3,0);
-		$data['hargarendah'] 	= $this->M_Beranda->produk_harga_rendah(3,0);
-		$data['hargatinggi'] 	= $this->M_Beranda->produk_harga_tinggi(3,0);
+		$data['products'] 		= $this->M_Beranda->tampil_data_limit(4,0);
+		$data['menukopi'] 		= $this->M_Beranda->data_menu_kopi();
+		$data['tidakkopi'] 		= $this->M_Beranda->data_tidak_kopi();
 		$data['category'] 		= $this->M_Beranda->kategori();
 		
 		$this->load->model('category/M_Cat');
@@ -25,52 +26,41 @@ class Beranda extends CI_Controller {
 		$this->load->view('account/beranda',$data);
 		$this->load->view('template/user_footer', $data);
 	}
-	function get_autocomplete(){
-        if (isset($_GET['term'])) {
-            $result = $this->M_Beranda->search_blog($_GET['term']);
-            if (count($result) > 0) {
-            foreach ($result as $row)
-                $arr_result[] = array(
-                    'label' => $row->prod_name,
-                );
-                echo json_encode($arr_result);
-            }
-        }
-    }
+
+	function fetch(){
+		echo $this->M_Beranda->fetch_data($this->uri->segment(3));
+	}
  
     function search(){
-		$data['judul'] = "K⍜PIKU OFFICIAL";
+		$data['judul'] = "K⍜PIKU | Cari Produk";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']		= $this->M_Cart->get_data();
 		$data['sum_jumlah']	= $this->M_Cart->jumlah_cart();
-		//Load Library
-		$this->load->library('pagination');
-		$config['base_url']		= 'http://localhost/kopiku/beranda/search';
 		
-		//KEYWORD SEARCH
-		$title=$this->input->post('caridata');
-		$this->db->like('prod_name', 	 $title);
-		$this->db->or_like('vend_id', 	 $title);
-		$this->db->or_like('quantity', 	 $title);
-		$this->db->or_like('prod_price', $title);
-		$this->db->or_like('harga_beli', $title);
-		$this->db->or_like('cat_name',   $title);
-		$this->db->from('products');
-		$this->db->join('category', 'products.cat_id = category.cat_id');
-		$config['total_rows']	= $this->db->count_all_results();
-		$data['total_rows'] 	= $config['total_rows'];
-		$config['per_page'] 	= 6;
-		$this->pagination->initialize($config);
-
-		$data['start'] = $this->uri->segment(3);
-		$data['products'] = $this->M_Beranda->search_blog($title, $config['per_page'], $data['start']);
-		$data['category'] = $this->M_Beranda->kategori();
-		$this->load->view('template/user_header', $data);
-        $this->load->view('produk/produkv',$data);
-		$this->load->view('template/user_footer', $data);
+		//Pencarian Produk
+		if($title=$this->input->post('caridata')){
+			$this->db->like('prod_name', $title);
+			$this->db->from('products');
+			$this->db->join('category', 'products.cat_id = category.cat_id');
+			$config['total_rows']	= $this->db->count_all_results();
+			$data['total_rows'] 	= $config['total_rows'];
+			$data['start'] = $this->uri->segment(3);
+			$data['products'] = $this->M_Beranda->search_data($title, $data['start']);
+			$data['category'] = $this->M_Beranda->kategori();
+			$this->load->view('template/user_header', $data);
+			$this->load->view('produk/produkv',$data);
+			$this->load->view('template/user_footer', $data);
+		}else{
+			redirect('produk');
+		}
+		
     }
 	function about(){
-		$data['judul'] = "K⍜PIKU | About Us";
+		$data['judul'] = "K⍜PIKU | Tentang Kami";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']= $this->M_Cart->jumlah_cart();
@@ -79,7 +69,9 @@ class Beranda extends CI_Controller {
 		$this->load->view('template/user_footer', $data);
 	}
 	function contact(){
-		$data['judul'] = "K⍜PIKU | Contact Us";
+		$data['judul'] = "K⍜PIKU | Hubungi";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']= $this->M_Cart->jumlah_cart();
@@ -95,10 +87,12 @@ class Beranda extends CI_Controller {
 			'komen'=> $this->input->post('komen')
 			);
 		$query = $this->db->insert('contacts',$data);
-		redirect('beranda/contact');
+		redirect('beranda');
 	}
 	function pemesanan(){
 		$data['judul'] = "K⍜PIKU | Proses Pesan";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']= $this->M_Cart->jumlah_cart();
@@ -106,13 +100,14 @@ class Beranda extends CI_Controller {
 		$this->load->view('account/pemesananv',$data);
 		$this->load->view('template/user_footer', $data);
 	}
-	function detail($prod_id){
+	function detail($id){
 		$data['judul'] = "K⍜PIKU | Detail Produk";
+		$data['users']= $this->db->get_where('users', ['username' =>
+		$this->session->userdata('username')])->row_array();
 		$this->load->model('cart/M_Cart');
 		$data['cart']= $this->M_Cart->get_data();
 		$data['sum_jumlah']= $this->M_Cart->jumlah_cart();
-		$where = array('prod_id' => $prod_id);
-		$data['products'] = $this->M_Beranda->detail_data($where,'products')->result();
+		$data['dprod'] = $this->M_Beranda->detail_data($id);
 		$this->load->view('template/user_header', $data);
 		$this->load->view('account/detailv',$data);
 		$this->load->view('template/user_footer', $data);
